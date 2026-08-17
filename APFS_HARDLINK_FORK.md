@@ -13,9 +13,14 @@ reports link counts, advertises `FILE_SUPPORTS_HARD_LINKS`, and maps FUSE
 Current verification:
 
 - `git diff --check` passes.
-- `winfsp-x64.dll` and import library build with Visual Studio 2022.
+- `winfsp-x64.sys`, `winfsp-x64.dll`, and import library build with Visual
+  Studio 2022 plus WDK 10.0.26100.
 - Driver project now targets the latest installed Windows 10 SDK and declares
   the Windows 10 API level required by `FileLinkInformationEx`.
+- Test-signed side-by-side driver loads on an isolated Windows 11 VM.
+- Exact driver/DLL ABI passes both `CreateHardLinkW` / `FileLinkInformation`
+  and `NtSetInformationFile` / `FileLinkInformationEx`, including root and
+  cross-directory create, write-through-alias, link-count, and delete tests.
 - APFS for Windows builds with `/W4 /WX` against this ABI.
 - APFS for Windows CTest passes 12/12 with this runtime DLL.
 - Copied APFS core plus macOS kernel mount and three native `fsck_apfs` hard-link
@@ -23,9 +28,6 @@ Current verification:
 
 Production blockers:
 
-- clean WDK kernel-driver build and kernel test suite coverage;
-- exact driver/DLL ABI lifecycle and native `CreateHardLinkW` test evidence;
-- dedicated regression coverage for `FileLinkInformationEx`;
 - Microsoft production driver signing without Test Mode.
 
 Do not install or distribute this branch as a production driver until those
