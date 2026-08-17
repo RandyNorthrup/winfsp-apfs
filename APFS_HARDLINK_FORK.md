@@ -8,7 +8,9 @@ This branch adds native Windows hard-link transport to WinFsp for APFS for
 Windows. It extends the existing fixed-size interface by consuming one reserved
 callback slot, transports `FileLinkInformation` and `FileLinkInformationEx`,
 reports link counts, advertises `FILE_SUPPORTS_HARD_LINKS`, and maps FUSE
-`link` operations.
+`link` operations. Its dedicated SxS driver does not create WinFsp's
+unsuffixed compatibility device aliases, so it can load beside an active stock
+WinFsp SxS driver without taking over stock clients.
 
 Current verification:
 
@@ -18,6 +20,7 @@ Current verification:
 - Driver project now targets the latest installed Windows 10 SDK and declares
   the Windows 10 API level required by `FileLinkInformationEx`.
 - Test-signed side-by-side driver loads on an isolated Windows 11 VM.
+- Dedicated SxS runtime loads beside an active stock WinFsp driver.
 - Exact driver/DLL ABI passes both `CreateHardLinkW` / `FileLinkInformation`
   and `NtSetInformationFile` / `FileLinkInformationEx`, including root and
   cross-directory create, write-through-alias, link-count, and delete tests.

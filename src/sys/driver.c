@@ -260,15 +260,12 @@ static NTSTATUS FspDriverInitializeDevices(VOID)
         &Globals->FsctlDiskDeviceObject);
     if (!NT_SUCCESS(Result))
         goto exit;
-    if (0 != FspSxsIdent()->Length)
-    {
-        /* \Device\WinFsp.Disk SxS symlink */
-        RtlInitUnicodeString(&SymlinkName, L"\\Device\\" FSP_FSCTL_DISK_DEVICE_NAME);
-        Result = IoCreateSymbolicLink(&SymlinkName, &DeviceName);
-        if (!NT_SUCCESS(Result))
-            goto exit;
-        Globals->InitDoneSymlinkDisk = 1;
-    }
+    /*
+     * The APFS runtime always loads this driver through an explicit SxS
+     * identifier. Do not claim the unsuffixed compatibility alias: stock
+     * WinFsp may already own it, and the SxS DLL addresses this device by its
+     * suffixed name.
+     */
     RtlInitEmptyUnicodeString(&DeviceName, DeviceNameBuf, sizeof DeviceNameBuf);
     Result = RtlUnicodeStringPrintf(&DeviceName,
         L"\\Device\\" FSP_FSCTL_NET_DEVICE_NAME "%wZ",
@@ -280,15 +277,6 @@ static NTSTATUS FspDriverInitializeDevices(VOID)
         &Globals->FsctlNetDeviceObject);
     if (!NT_SUCCESS(Result))
         goto exit;
-    if (0 != FspSxsIdent()->Length)
-    {
-        /* \Device\WinFsp.Net SxS symlink */
-        RtlInitUnicodeString(&SymlinkName, L"\\Device\\" FSP_FSCTL_NET_DEVICE_NAME);
-        Result = IoCreateSymbolicLink(&SymlinkName, &DeviceName);
-        if (!NT_SUCCESS(Result))
-            goto exit;
-        Globals->InitDoneSymlinkNet = 1;
-    }
     Result = FspDeviceCreate(FspFsmupDeviceExtensionKind, 0,
         FILE_DEVICE_NETWORK_FILE_SYSTEM, FILE_REMOTE_DEVICE,
         &Globals->FsmupDeviceObject);
