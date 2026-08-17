@@ -1699,6 +1699,7 @@ VOID FspFileNodeGetFileInfo(FSP_FILE_NODE *FileNode, FSP_FSCTL_FILE_INFO *FileIn
     FileInfo->LastAccessTime = FileNode->LastAccessTime;
     FileInfo->LastWriteTime = FileNode->LastWriteTime;
     FileInfo->ChangeTime = FileNode->ChangeTime;
+    FileInfo->HardLinks = FileNode->HardLinks;
     FileInfo->EaSize = FileNode->EaSize;
 }
 
@@ -1847,6 +1848,7 @@ VOID FspFileNodeSetFileInfo(FSP_FILE_NODE *FileNode, PFILE_OBJECT CcFileObject,
     MainFileNode->LastAccessTime = FileInfo->LastAccessTime;
     MainFileNode->LastWriteTime = FileInfo->LastWriteTime;
     MainFileNode->ChangeTime = FileInfo->ChangeTime;
+    MainFileNode->HardLinks = FileInfo->HardLinks;
     MainFileNode->EaSize = FileInfo->EaSize;
 
     if (0 != CcFileObject)

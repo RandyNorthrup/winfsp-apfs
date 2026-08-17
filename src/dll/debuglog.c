@@ -503,6 +503,22 @@ FSP_API VOID FspDebugLogRequest(FSP_FSCTL_TRANSACT_REQ *Request)
                 FSP_FSCTL_TRANSACT_REQ_TOKEN_HANDLE(Request->Req.SetInformation.Info.Rename.AccessToken),
                 FSP_FSCTL_TRANSACT_REQ_TOKEN_PID(Request->Req.SetInformation.Info.Rename.AccessToken));
             break;
+        case 11/*FileLinkInformation*/:
+        case 72/*FileLinkInformationEx*/:
+            FspDebugLog("%S[TID=%04lx]: %p: >>SetInformation [Link] %s%S%s%s, "
+                "NewFileName=\"%S\", AccessToken=%p[PID=%lx], Flags=%lx\n",
+                FspDiagIdent(), GetCurrentThreadId(), (PVOID)Request->Hint,
+                Request->FileName.Size ? "\"" : "",
+                Request->FileName.Size ? (PWSTR)Request->Buffer : L"",
+                Request->FileName.Size ? "\", " : "",
+                FspDebugLogUserContextString(
+                    Request->Req.SetInformation.UserContext, Request->Req.SetInformation.UserContext2,
+                    UserContextBuf),
+                (PWSTR)(Request->Buffer + Request->Req.SetInformation.Info.Rename.NewFileName.Offset),
+                FSP_FSCTL_TRANSACT_REQ_TOKEN_HANDLE(Request->Req.SetInformation.Info.Rename.AccessToken),
+                FSP_FSCTL_TRANSACT_REQ_TOKEN_PID(Request->Req.SetInformation.Info.Rename.AccessToken),
+                Request->Req.SetInformation.Info.RenameEx.Flags);
+            break;
         case 65/*FileRenameInformationEx*/:
             FspDebugLog("%S[TID=%04lx]: %p: >>SetInformation [RenameEx] %s%S%s%s, "
                 "NewFileName=\"%S\", AccessToken=%p[PID=%lx], Flags=%lx\n",

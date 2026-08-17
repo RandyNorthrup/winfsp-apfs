@@ -212,7 +212,7 @@ enum
     UINT32 ReparsePoints:1;             /* file system supports reparse points */\
     UINT32 ReparsePointsAccessCheck:1;  /* file system performs reparse point access checks */\
     UINT32 NamedStreams:1;              /* file system supports named streams */\
-    UINT32 HardLinks:1;                 /* unimplemented; set to 0 */\
+    UINT32 HardLinks:1;                 /* file system supports hard links */\
     UINT32 ExtendedAttributes:1;        /* file system supports extended attributes */\
     UINT32 ReadOnlyVolume:1;\
     /* kernel-mode flags */\
@@ -287,7 +287,7 @@ typedef struct
     UINT64 LastWriteTime;
     UINT64 ChangeTime;
     UINT64 IndexNumber;
-    UINT32 HardLinks;                   /* unimplemented: set to 0 */
+    UINT32 HardLinks;                   /* number of hard links; 0 means unknown */
     UINT32 EaSize;
 } FSP_FSCTL_FILE_INFO;
 FSP_FSCTL_STATIC_ASSERT(72 == sizeof(FSP_FSCTL_FILE_INFO),

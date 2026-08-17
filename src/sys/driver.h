@@ -1694,6 +1694,7 @@ typedef struct FSP_FILE_NODE
     UINT64 LastAccessTime;
     UINT64 LastWriteTime;
     UINT64 ChangeTime;
+    UINT32 HardLinks;
     UINT32 EaSize;
     ULONG FileInfoChangeNumber;
     ULONG SecurityChangeNumber;

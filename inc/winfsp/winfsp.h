@@ -190,6 +190,8 @@ enum
  * </li>
  * </ul>
  */
+#define FSP_FILE_SYSTEM_INTERFACE_HAS_CREATE_HARD_LINK 1
+
 typedef struct _FSP_FILE_SYSTEM_INTERFACE
 {
     /**
@@ -1085,11 +1087,33 @@ typedef struct _FSP_FILE_SYSTEM_INTERFACE
     VOID (*DispatcherStopped)(FSP_FILE_SYSTEM *FileSystem,
         BOOLEAN Normally);
 
+    /**
+     * Create a hard link to an existing file.
+     *
+     * @param FileSystem
+     *     The file system on which this request is posted.
+     * @param FileContext
+     *     The file context of the existing file.
+     * @param FileName
+     *     The name of the existing file.
+     * @param NewFileName
+     *     The name of the hard link to create.
+     * @param ReplaceIfExists
+     *     Whether an existing destination may be replaced.
+     * @param FileInfo [out]
+     *     Pointer to a structure that will receive updated information for the existing file.
+     * @return
+     *     STATUS_SUCCESS or error code.
+     */
+    NTSTATUS (*CreateHardLink)(FSP_FILE_SYSTEM *FileSystem,
+        PVOID FileContext, PWSTR FileName, PWSTR NewFileName, BOOLEAN ReplaceIfExists,
+        FSP_FSCTL_FILE_INFO *FileInfo);
+
     /*
      * This ensures that this interface will always contain 64 function pointers.
      * Please update when changing the interface as it is important for future compatibility.
      */
-    NTSTATUS (*Reserved[31])();
+    NTSTATUS (*Reserved[30])();
 } FSP_FILE_SYSTEM_INTERFACE;
 FSP_FSCTL_STATIC_ASSERT(sizeof(FSP_FILE_SYSTEM_INTERFACE) == 64 * sizeof(NTSTATUS (*)()),
     "FSP_FILE_SYSTEM_INTERFACE must have 64 entries.");
@@ -1433,6 +1457,8 @@ UINT32 FspFileSystemOperationProcessId(VOID)
         return FSP_FSCTL_TRANSACT_REQ_TOKEN_PID(Request->Req.Create.AccessToken);
     case FspFsctlTransactSetInformationKind:
         if (10/*FileRenameInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+            11/*FileLinkInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+            72/*FileLinkInformationEx*/ == Request->Req.SetInformation.FileInformationClass ||
             65/*FileRenameInformationEx*/ == Request->Req.SetInformation.FileInformationClass)
             return FSP_FSCTL_TRANSACT_REQ_TOKEN_PID(Request->Req.SetInformation.Info.Rename.AccessToken);
         /* fall through! */

@@ -882,6 +882,7 @@ FSP_FUSE_API struct fuse *fsp_fuse_new(struct fsp_fuse_env *env,
     opt_data.VolumeParams.ReparsePoints = TRUE;
     opt_data.VolumeParams.ReparsePointsAccessCheck = FALSE;
     opt_data.VolumeParams.NamedStreams = FALSE;
+    opt_data.VolumeParams.HardLinks = 0 != ops->link;
     opt_data.VolumeParams.ReadOnlyVolume = FALSE;
     opt_data.VolumeParams.PostCleanupWhenModifiedOnly = !opt_data.set_FlushOnCleanup;
     opt_data.VolumeParams.PassQueryDirectoryFileName = TRUE;

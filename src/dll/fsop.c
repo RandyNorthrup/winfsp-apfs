@@ -57,6 +57,8 @@ FSP_API NTSTATUS FspFileSystemOpEnter(FSP_FILE_SYSTEM *FileSystem,
                 Request->Req.Cleanup.Delete) ||
             (FspFsctlTransactSetInformationKind == Request->Kind &&
                 (10/*FileRenameInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+                11/*FileLinkInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+                72/*FileLinkInformationEx*/ == Request->Req.SetInformation.FileInformationClass ||
                 65/*FileRenameInformationEx*/ == Request->Req.SetInformation.FileInformationClass)) ||
             FspFsctlTransactSetVolumeInformationKind == Request->Kind ||
             (FspFsctlTransactFlushBuffersKind == Request->Kind &&
@@ -98,6 +100,8 @@ FSP_API NTSTATUS FspFileSystemOpLeave(FSP_FILE_SYSTEM *FileSystem,
                 Request->Req.Cleanup.Delete) ||
             (FspFsctlTransactSetInformationKind == Request->Kind &&
                 (10/*FileRenameInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+                11/*FileLinkInformation*/ == Request->Req.SetInformation.FileInformationClass ||
+                72/*FileLinkInformationEx*/ == Request->Req.SetInformation.FileInformationClass ||
                 65/*FileRenameInformationEx*/ == Request->Req.SetInformation.FileInformationClass)) ||
             FspFsctlTransactSetVolumeInformationKind == Request->Kind ||
             (FspFsctlTransactFlushBuffersKind == Request->Kind &&
@@ -1188,6 +1192,27 @@ FSP_API NTSTATUS FspFileSystemOpSetInformation(FSP_FILE_SYSTEM *FileSystem,
                 (PWSTR)Request->Buffer,
                 (PWSTR)(Request->Buffer + Request->Req.SetInformation.Info.Rename.NewFileName.Offset),
                 0 != Request->Req.SetInformation.Info.Rename.AccessToken);
+        }
+        break;
+    case 11/*FileLinkInformation*/:
+    case 72/*FileLinkInformationEx*/:
+        if (0 != FileSystem->Interface->CreateHardLink)
+        {
+            if (0 != Request->Req.SetInformation.Info.Rename.AccessToken)
+            {
+                Result = FspFileSystemRenameCheck(FileSystem, Request);
+                if (!NT_SUCCESS(Result) &&
+                    STATUS_OBJECT_PATH_NOT_FOUND != Result &&
+                    STATUS_OBJECT_NAME_NOT_FOUND != Result)
+                    break;
+            }
+            Result = FileSystem->Interface->CreateHardLink(FileSystem,
+                (PVOID)ValOfFileContext(Request->Req.SetInformation),
+                (PWSTR)Request->Buffer,
+                (PWSTR)(Request->Buffer + Request->Req.SetInformation.Info.Rename.NewFileName.Offset),
+                0 != (1/*FILE_LINK_REPLACE_IF_EXISTS*/ &
+                    Request->Req.SetInformation.Info.RenameEx.Flags),
+                &FileInfo);
         }
         break;
     }
