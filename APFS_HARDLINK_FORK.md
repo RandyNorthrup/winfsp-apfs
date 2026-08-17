@@ -1,6 +1,6 @@
 # APFS Hard-Link Transport Fork
 
-Branch: `apfs-hardlinks`
+Branch: `main`
 
 Upstream base: `fde790d8ea41283606d1c56b557608a17e455f59` (`v2.2B4`)
 
