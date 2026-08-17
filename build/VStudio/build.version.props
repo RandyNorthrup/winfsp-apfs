@@ -86,8 +86,9 @@
                 MyNtddiVersion = 0x0A000006
                 MyWin32Version = 0x0A00
         -->
-        <MyTargetPlatformVersion>10.0.19041.0</MyTargetPlatformVersion>
-        <MyNtddiVersion>0x06010000</MyNtddiVersion>
-        <MyWin32Version>0x0601</MyWin32Version>
+        <!-- Native hard-link Ex transport uses Win10 file-information flags. -->
+        <MyTargetPlatformVersion>$(LatestTargetPlatformVersion)</MyTargetPlatformVersion>
+        <MyNtddiVersion>0x0A000006</MyNtddiVersion>
+        <MyWin32Version>0x0A00</MyWin32Version>
     </PropertyGroup>
 </Project>

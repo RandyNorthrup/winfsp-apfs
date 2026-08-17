@@ -14,16 +14,19 @@ Current verification:
 
 - `git diff --check` passes.
 - `winfsp-x64.dll` and import library build with Visual Studio 2022.
+- Driver project now targets the latest installed Windows 10 SDK and declares
+  the Windows 10 API level required by `FileLinkInformationEx`.
 - APFS for Windows builds with `/W4 /WX` against this ABI.
 - APFS for Windows CTest passes 12/12 with this runtime DLL.
-- Copied APFS core and native macOS `fsck_apfs` hard-link tests pass.
+- Copied APFS core plus macOS kernel mount and three native `fsck_apfs` hard-link
+  tests pass.
 
 Production blockers:
 
-- clean WDK kernel-driver build;
-- WinFsp kernel test suite coverage for both link information classes;
-- exact runtime/driver ABI lifecycle test on isolated Windows;
-- Microsoft-compatible production signing without Test Mode.
+- clean WDK kernel-driver build and kernel test suite coverage;
+- exact driver/DLL ABI lifecycle and native `CreateHardLinkW` test evidence;
+- dedicated regression coverage for `FileLinkInformationEx`;
+- Microsoft production driver signing without Test Mode.
 
 Do not install or distribute this branch as a production driver until those
 gates are closed.
